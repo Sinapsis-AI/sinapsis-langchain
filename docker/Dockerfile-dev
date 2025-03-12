@@ -1,0 +1,11 @@
+FROM sinapsis:base
+
+# sync all requirements including optional ones
+COPY . /app/
+WORKDIR /app
+RUN uv build --all-packages
+RUN uv sync --frozen --all-extras --all-packages
+
+# install the generated wheel for this app
+RUN uv pip install /app/dist/sinapsis_*.whl
+

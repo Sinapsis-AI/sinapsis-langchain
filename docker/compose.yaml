@@ -1,0 +1,23 @@
+services:
+
+  sinapsis-langchain:
+    image: sinapsis-langchain:base
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+      ssh:
+        - default
+    environment:
+      PYTHONPATH: /lib/python3.10/:/app/.venv/lib/python3.10/site-packages
+
+  sinapsis-langchain-readers:
+    extends:
+      service: sinapsis-langchain
+    container_name: sinapsis-langchain-readers-wikipedia
+    shm_size: '8gb'
+    volumes:
+      - "../packages/sinapsis_langchain_readers/src/sinapsis_langchain_readers/configs/:/app/src/sinapsis_langchain_readers/configs"
+      - "~/.cache/sinapsis/:/root/.cache/sinapsis"
+    command: /app/.venv/bin/sinapsis run /app/src/sinapsis_langchain_readers/configs/wikipedia_loader.yml
+    network_mode: "host"
+

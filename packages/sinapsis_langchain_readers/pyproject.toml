@@ -1,0 +1,101 @@
+[project]
+name = "sinapsis-langchain"
+version = "0.1.0"
+description = "Package that provides support for Langchain community data loaders."
+authors = [{ name = "SinapsisAI", email = "dev@sinapsis.tech" }]
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = [
+    "langchain-community>=0.3.5",
+    "sinapsis>=0.1.1",
+]
+
+
+[project.optional-dependencies]
+langchain-webpages-readers = [
+    "apify-client>=1.8.1",
+    "arxiv>=2.1.3",
+    "beautifulsoup4>=4.12.3",
+    "browserbase>=1.0.0",
+    "dgml-utils>=0.3.0",
+    #"docugami-langchain",
+    "firecrawl-py>=1.4.0",
+    "geopandas>=1.0.1",
+    "librosa>=0.10.2.post1",
+    "pyairtable>=2.3.5",
+    "pydub>=0.25.1",
+    "pymupdf>=1.24.13",
+    "sodapy>=2.2.0",
+    "yt-dlp>=2024.11.4",
+]
+langchain-wikipedia-readers = ["wikipedia>=1.4.0"]
+langchain-pdfs-readers = [
+    "bibtexparser>=1.4.2",
+    "pymupdf>=1.24.13",
+    "pypdf>=5.1.0",
+]
+langchain-unstructured-readers = [
+    "langchain-unstructured>=0.1.5",
+    "unstructured[pdf]>=0.16.5",
+    "unstructured-client>=0.25.9",
+    "python-magic>=0.4.27",
+]
+langchain-cloud-readers = [
+    "amazon-textract-caller>=0.2.4",
+    "assemblyai>=0.35.1",
+    "atlassian-python-api>=3.41.16",
+    "azure-ai-generative>=1.0.0b11",
+    "azure-storage-blob>=12.23.1",
+    "azureml-fsspec>=1.3.1",
+    "boto3>=1.35.57",
+    "dropbox>=12.0.2",
+    "google-api-python-client>=2.151.0",
+    "google-auth-httplib2>=0.2.0",
+    "google-auth-oauthlib>=1.2.1",
+    "html2text>=2024.2.26",
+    "langchain-community>=0.3.5",
+    "langchain-google-bigtable>=0.4.1",
+    "langchain-google-community[gcs]>=2.0.2",
+    "langchain-openai>=0.2.6",
+    "playwright>=1.48.0",
+    "pyodps>=0.12.1",
+    "python-dotenv>=1.0.1",
+]
+langchain-social-readers = [
+    "mastodon-py>=1.8.1",
+    "pandas>=2.2.3",
+    "tweepy>=4.14.0",
+]
+langchain-productivity-tools-readers = ["lxml>=4.30", "py-trello>=0.20.1"]
+langchain-common-readers = ["bs4>=0.0.2", "jq>=1.8.0"]
+langchain-database-readers = [
+    "fauna>=2.3.0",
+    "langchain>=0.3.7",
+    "langchain-google-alloydb-pg>=0.8.0",
+    "langchain-google-community[bigquery]>=2.0.2",
+    "pyowm>=3.3.0",
+]
+langchain-productivity-tools = ["gitpython>=3.1.43"]
+
+all = ["sinapsis-langchain-readers[langchain-productivity-tools]",
+    "sinapsis-langchain-readers[langchain-database-readers]",
+    "sinapsis-langchain-readers[langchain-common-readers]",
+    "sinapsis-langchain-readers[langchain-productivity-tools-readers]",
+    "sinapsis-langchain-readers[langchain-social-readers]",
+    "sinapsis-langchain-readers[langchain-cloud-readers]",
+    "sinapsis-langchain-readers[langchain-unstructured-readers]",
+    "sinapsis-langchain-readers[langchain-pdfs-readers ]",
+    "sinapsis-langchain-readers[langchain-wikipedia-readers]",
+    "sinapsis-langchain-readers[langchain-webpages-readers]",
+]
+langchain-wepages-readers = [
+    "youtube-transcript-api>=1.0.0",
+]
+
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+[tools.setuptools]
+license-files = []
