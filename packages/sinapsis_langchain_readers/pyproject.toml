@@ -1,5 +1,5 @@
 [project]
-name = "sinapsis-langchain"
+name = "sinapsis-langchain-readers"
 version = "0.1.0"
 description = "Package that provides support for Langchain community data loaders."
 authors = [{ name = "SinapsisAI", email = "dev@sinapsis.tech" }]
