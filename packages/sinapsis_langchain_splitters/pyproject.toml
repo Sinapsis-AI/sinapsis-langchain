@@ -1,29 +1,15 @@
 [project]
-name = "sinapsis-langchain"
-version = "0.2.0"
-description = "Sinapsis module that adds support for the Langchain library"
-authors = [{ name = "SinapsisAI", email = "dev@sinapsis.tech" }]
+name = "sinapsis-langchain-splitters"
+version = "0.1.0"
+description = "Add your description here"
 readme = "README.md"
-license = { file = "LICENSE" }
 requires-python = ">=3.10"
+license-files = ["LICENSE"]
 dependencies = [
+    "langchain-community>=0.3.20",
+    "langchain-text-splitters>=0.3.7",
     "sinapsis>=0.1.1",
 ]
-
-[project.optional-dependencies]
-all = [
-    "sinapsis-langchain-readers[all]",
-]
-
-
-[tool.uv.workspace]
-members = ["packages/*"]
-exclude = ["packages/*.egg-info"]
-
-
-[tool.uv.sources]
-sinapsis-langchain-readers = { workspace = true }
-sinapsis-langchain-splitters = { workspace = true }
 
 [[tool.uv.index]]
 url = "https://pypi.sinapsis.tech/"
@@ -61,8 +47,6 @@ lint.ignore = ['ANN401']
 line-length = 120
 show-fixes = true
 
-[tool.setuptools]
-packages = { find = { where = ["packages"] } }
 
 [build-system]
 requires = ["setuptools"]

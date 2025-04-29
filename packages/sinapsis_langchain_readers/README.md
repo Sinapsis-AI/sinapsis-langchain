@@ -5,28 +5,21 @@
     src="https://github.com/Sinapsis-AI/brand-resources/blob/main/sinapsis_logo/4x/logo.png?raw=true"
     alt="" width="300">
 </a><br>
-Sinapsis Langchain
+Sinapsis Langchain Readers
 <br>
 </h1>
 
-<h4 align="center">Templates for seamless integration of LangChain frameword.</h4>
+<h4 align="center">Templates for easy integration of LangChain document loaders within Sinapsis.</h4>
 
 <p align="center">
 <a href="#installation">🐍 Installation</a> •
-<a href="#features">🚀 Packages</a> •
+<a href="#features">🚀 Features</a> •
 <a href="#usage">📚 Usage example</a> •
 <a href="#documentation">📙 Documentation</a> •
 <a href="license"> 🔍 License</a>
 </p>
 
-The `sinapsis-langchain` module adds support for the Langchain framework, in particular, Langchain community data loaders and text splitters.
-
-
-We add support for the following packages:
-
-*<code> sinapsis-langchain-readers</code>
-
-*<code> sinapsis-langchain-splitters</code>
+The `sinapsis-langchain-readers` module adds support for the LangChain library, in particular, LangChain community data loaders.
 
 <h2 id="installation">🐍 Installation</h2>
 Install using your package manager of choice. We encourage the use of <code>uv</code>
@@ -41,12 +34,10 @@ Example with <code>uv</code>:
   pip install sinapsis-langchain-readers --extra-index-url https://pypi.sinapsis.tech
 ```
 
->[!NOTE]
-> Change the name of the package accordingly
 
 
 > [!IMPORTANT]
-> The langchain templates may require extra dependencies. For development, we recommend installing the package with all the optional dependencies:
+> The langchain readers templates may require extra dependencies. For development, we recommend installing the package with all the optional dependencies:
 >
 ```bash
   uv pip install sinapsis-langchain-readers[all] --extra-index-url https://pypi.sinapsis.tech
@@ -56,23 +47,11 @@ Example with <code>uv</code>:
 >
 
 
->[!NOTE]
-> Change the name of the package accordingly
-
->[!TIP]
-> you can also install the full mono repo
-
->
-```bash
-  uv pip install sinapsis-langchain[all] --extra-index-url https://pypi.sinapsis.tech
-```
-
-
 <h2 id="features">🚀 Features</h2>
 
 <h3> Templates Supported</h3>
 
-The **Sinapsis Langchain** module provides wrapper templates for **Langchain's community data loaders**, making them seamlessly usable within Sinapsis.
+The **Sinapsis Langchain** module provides wrapper templates for **LangChain's community data loaders**, making them seamlessly usable within Sinapsis.
 > [!NOTE]
 > Each loader template supports one attribute:
 > - **`add_document_as_text_packet`** (`bool`, default: `False`): Whether to add the loaded document as a text packet.

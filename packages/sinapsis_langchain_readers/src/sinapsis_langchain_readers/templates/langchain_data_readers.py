@@ -10,7 +10,8 @@ from langchain_community.document_loaders.blob_loaders import (
 )
 from langchain_core.documents.base import Document
 from sinapsis_core.data_containers.data_packet import DataContainer, TextPacket
-from sinapsis_core.template_base import Template, TemplateAttributes
+from sinapsis_core.template_base import Template
+from sinapsis_core.template_base.base_models import TemplateAttributes
 from sinapsis_core.template_base.dynamic_template import (
     BaseDynamicWrapperTemplate,
     WrapperEntryConfig,

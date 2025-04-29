@@ -5,28 +5,21 @@
     src="https://github.com/Sinapsis-AI/brand-resources/blob/main/sinapsis_logo/4x/logo.png?raw=true"
     alt="" width="300">
 </a><br>
-Sinapsis Langchain
+Sinapsis Langchain Splitters
 <br>
 </h1>
 
-<h4 align="center">Templates for seamless integration of LangChain frameword.</h4>
+<h4 align="center">Templates for easy integration of LangChain text splitters with Sinapsis.</h4>
 
 <p align="center">
 <a href="#installation">🐍 Installation</a> •
-<a href="#features">🚀 Packages</a> •
+<a href="#features">🚀 Features</a> •
 <a href="#usage">📚 Usage example</a> •
 <a href="#documentation">📙 Documentation</a> •
 <a href="license"> 🔍 License</a>
 </p>
 
-The `sinapsis-langchain` module adds support for the Langchain framework, in particular, Langchain community data loaders and text splitters.
-
-
-We add support for the following packages:
-
-*<code> sinapsis-langchain-readers</code>
-
-*<code> sinapsis-langchain-splitters</code>
+The `sinapsis-langchain-splitters` module adds support for all the text splitters supported by LangChain
 
 <h2 id="installation">🐍 Installation</h2>
 Install using your package manager of choice. We encourage the use of <code>uv</code>
@@ -34,19 +27,17 @@ Install using your package manager of choice. We encourage the use of <code>uv</
 Example with <code>uv</code>:
 
 ```bash
-  uv pip install sinapsis-langchain-readers --extra-index-url https://pypi.sinapsis.tech
+  uv pip install sinapsis-langchain-splitters --extra-index-url https://pypi.sinapsis.tech
 ```
  or with raw <code>pip</code>:
 ```bash
-  pip install sinapsis-langchain-readers --extra-index-url https://pypi.sinapsis.tech
+  pip install sinapsis-langchain-splitters --extra-index-url https://pypi.sinapsis.tech
 ```
 
->[!NOTE]
-> Change the name of the package accordingly
 
 
 > [!IMPORTANT]
-> The langchain templates may require extra dependencies. For development, we recommend installing the package with all the optional dependencies:
+> The langchain readers templates may require extra dependencies. For development, we recommend installing the package with all the optional dependencies:
 >
 ```bash
   uv pip install sinapsis-langchain-readers[all] --extra-index-url https://pypi.sinapsis.tech
@@ -54,18 +45,6 @@ Example with <code>uv</code>:
 > [!IMPORTANT]
 > Some langchain templates require additional system dependencies. Please refer to the official [LangChain Document Loaders documentation](https://python.langchain.com/docs/integrations/document_loaders/) for additional requirements.
 >
-
-
->[!NOTE]
-> Change the name of the package accordingly
-
->[!TIP]
-> you can also install the full mono repo
-
->
-```bash
-  uv pip install sinapsis-langchain[all] --extra-index-url https://pypi.sinapsis.tech
-```
 
 
 <h2 id="features">🚀 Features</h2>
@@ -89,51 +68,33 @@ For example, for ***WikipediaLoaderWrapper*** use ```sinapsis info --example-tem
 
 ```yaml
 agent:
-  name: agent to load Wikipedia documents using WikipediaLoaderWrapper template
+  name: my_test_agent
+  description: Agent to split text using the RecursiveCharacterTextSplitter class from LangChain
 templates:
 - template_name: InputTemplate
   class_name: InputTemplate
   attributes: {}
-- template_name: WikipediaLoaderWrapper
-  class_name: WikipediaLoaderWrapper
+- template_name: RecursiveCharacterTextSplitterWrapper
+  class_name: RecursiveCharacterTextSplitterWrapper
   template_input: InputTemplate
   attributes:
     add_document_as_text_packet: false
-    wikipedialoader_init:
-        query: the query for wikipedia
-        lang: en
-        load_max_docs: 5000
-        load_all_available_meta: False
-        doc_content_chars_max: 4000,
+    generic_key: WikipediaLoaderWrapper
+    recursivecharactertextsplitter_init:
+      separators: [" "]
+      keep_separator: true
+      is_separator_regex: false
+
 ```
 
 A complete list of available document loader classes in LangChain can be found at:
-[LangChain Community Document Loaders](https://python.langchain.com/api_reference/community/document_loaders.html#langchain-community-document-loaders)
+[LangChain Text Splitters](https://python.langchain.com/api_reference/text_splitters/index.html)
 
-<details>
-<summary><strong><span style="font-size: 1.25em;">🚫 Excluded Loaders</span></strong></summary>
 
-Some base classes or loaders that required additional configuration have been excluded and support for this will be included in future releases.
-
-- **Blob**
-- **BlobLoader**
-- **OracleTextSplitter**
-- **OracleDocLoader**
-- **TrelloLoaderExecute**
-- **TwitterTweetLoader**
-- **TrelloLoader**
-- **GoogleApiYoutubeLoader**
-- **GoogleApiClient**
-- **DiscordChatLoader**
-- **AssemblyAIAudioTranscriptLoader**
-- **ArcGISLoader**
-
-For all other supported loaders, refer to the LangChain API reference linked above.
-</details>
 <h2 id="usage">📚 Usage example</h2>
 
 
-The following example demonstrates how to use the **WikipediaLoaderWrapper** template for loading documents from Wikipedia within Sinapsis. Below is the full YAML configuration, followed by a breakdown of each component.
+The following example demonstrates how to use the **RecursiveCharacterTextSplitterWrapper** template to chunk the Documents from a WikipediaLoaderWrapper template.
 <details>
 <summary><strong><span style="font-size: 1.25em;">configuration </span></strong></summary>
 
@@ -159,6 +120,20 @@ templates:
       load_max_docs: 1
       load_all_available_meta: false
       doc_content_chars_max: 4000
+- template_name: InputTemplate
+  class_name: WikipediaLoaderWrapper
+  attributes: {}
+- template_name: RecursiveCharacterTextSplitterWrapper
+  class_name: RecursiveCharacterTextSplitterWrapper
+  template_input: InputTemplate
+  attributes:
+    add_document_as_text_packet: false
+    generic_key: WikipediaLoaderWrapper
+    recursivecharactertextsplitter_init:
+      separators: null
+      keep_separator: true
+      is_separator_regex: false
+
 ```
 To run, simply use:
 
