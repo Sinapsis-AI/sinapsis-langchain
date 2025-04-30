@@ -1,6 +1,6 @@
 [project]
 name = "sinapsis-langchain"
-version = "0.2.2"
+version = "0.2.3"
 description = "Sinapsis module that adds support for the Langchain library"
 authors = [{ name = "SinapsisAI", email = "dev@sinapsis.tech" }]
 readme = "README.md"

@@ -1,9 +1,10 @@
 [project]
 name = "sinapsis-langchain-splitters"
-version = "0.1.1"
+version = "0.1.2"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
+authors = [{ name = "SinapsisAI", email = "dev@sinapsis.tech" }]
 license-files = ["LICENSE"]
 dependencies = [
     "langchain-community>=0.3.20",
