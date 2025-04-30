@@ -5540,7 +5540,7 @@ wheels = [
 
 [[package]]
 name = "sinapsis-langchain"
-version = "0.2.1"
+version = "0.2.2"
 source = { editable = "." }
 dependencies = [
     { name = "sinapsis" },
@@ -5573,7 +5573,7 @@ dev = [
 
 [[package]]
 name = "sinapsis-langchain-readers"
-version = "0.1.1"
+version = "0.1.2"
 source = { editable = "packages/sinapsis_langchain_readers" }
 dependencies = [
     { name = "langchain-community" },
@@ -5798,7 +5798,7 @@ dev = [
 
 [[package]]
 name = "sinapsis-langchain-splitters"
-version = "0.1.0"
+version = "0.1.1"
 source = { editable = "packages/sinapsis_langchain_splitters" }
 dependencies = [
     { name = "langchain-community" },
