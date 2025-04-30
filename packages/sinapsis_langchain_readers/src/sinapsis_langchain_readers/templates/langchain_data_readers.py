@@ -11,7 +11,7 @@ from langchain_community.document_loaders.blob_loaders import (
 from langchain_core.documents.base import Document
 from sinapsis_core.data_containers.data_packet import DataContainer, TextPacket
 from sinapsis_core.template_base import Template
-from sinapsis_core.template_base.base_models import TemplateAttributes
+from sinapsis_core.template_base.base_models import OutputTypes, TemplateAttributes, UIPropertiesMetadata
 from sinapsis_core.template_base.dynamic_template import (
     BaseDynamicWrapperTemplate,
     WrapperEntryConfig,
@@ -70,7 +70,7 @@ class LangChainDataReaderBase(BaseDynamicWrapperTemplate):
     WrapperEntry = WrapperEntryConfig(
         wrapped_object=document_loaders, exclude_module_atts=EXCLUDED_LOADER_MODULE_OBJECTS
     )
-    CATEGORY = "LangChainDataReaders"
+    UIProperties = UIPropertiesMetadata(category="LangChain", output_type=OutputTypes.TEXT)
 
     class AttributesBaseModel(TemplateAttributes):
         """

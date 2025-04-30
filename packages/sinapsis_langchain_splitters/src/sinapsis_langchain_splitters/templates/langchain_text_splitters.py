@@ -3,7 +3,7 @@ from langchain import text_splitter
 from langchain_core.documents.base import Document
 from sinapsis_core.data_containers.data_packet import DataContainer, TextPacket
 from sinapsis_core.template_base import Template
-from sinapsis_core.template_base.base_models import TemplateAttributes
+from sinapsis_core.template_base.base_models import OutputTypes, TemplateAttributes, UIPropertiesMetadata
 from sinapsis_core.template_base.dynamic_template import (
     BaseDynamicWrapperTemplate,
     WrapperEntryConfig,
@@ -45,7 +45,7 @@ class LangChainTextSplitterBase(BaseDynamicWrapperTemplate):
     """
 
     WrapperEntry = WrapperEntryConfig(wrapped_object=text_splitter, exclude_module_atts=["split_text_on_tokens"])
-    CATEGORY = "LangChainTextSplitters"
+    UIProperties = UIPropertiesMetadata(category="LangChain", output_type=OutputTypes.TEXT)
 
     class AttributesBaseModel(TemplateAttributes):
         """
