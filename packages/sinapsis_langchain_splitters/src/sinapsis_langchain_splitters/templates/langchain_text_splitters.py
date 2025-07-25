@@ -11,6 +11,8 @@ from sinapsis_core.template_base.dynamic_template import (
 from sinapsis_core.template_base.dynamic_template_factory import make_dynamic_template
 from sinapsis_core.utils.env_var_keys import SINAPSIS_BUILD_DOCS
 
+from sinapsis_langchain_splitters.helpers.tags import Tags
+
 SOURCE: str = "source"
 CONTENT: str = "content"
 
@@ -45,7 +47,18 @@ class LangChainTextSplitterBase(BaseDynamicWrapperTemplate):
     """
 
     WrapperEntry = WrapperEntryConfig(wrapped_object=text_splitter, exclude_module_atts=["split_text_on_tokens"])
-    UIProperties = UIPropertiesMetadata(category="LangChain", output_type=OutputTypes.TEXT)
+    UIProperties = UIPropertiesMetadata(
+        category="LangChain",
+        output_type=OutputTypes.TEXT,
+        tags=[
+            Tags.DOCUMENTS,
+            Tags.DYNAMIC,
+            Tags.FILES,
+            Tags.LANGCHAIN,
+            Tags.SPLITTERS,
+            Tags.TEXT,
+        ],
+    )
 
     class AttributesBaseModel(TemplateAttributes):
         """

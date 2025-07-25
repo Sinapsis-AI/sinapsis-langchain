@@ -1,6 +1,6 @@
 [project]
 name = "sinapsis-langchain-readers"
-version = "0.1.4"
+version = "0.1.5"
 description = "Package that provides support for Langchain community data loaders."
 authors = [{ name = "SinapsisAI", email = "dev@sinapsis.tech" }]
 readme = "README.md"
@@ -62,6 +62,7 @@ langchain-cloud-readers = [
     "playwright>=1.48.0",
     "pyodps>=0.12.1",
     "python-dotenv>=1.0.1",
+    "o365>=2.1.2",
 ]
 langchain-social-readers = [
     "mastodon-py>=1.8.1",

@@ -11,7 +11,11 @@ from langchain_community.document_loaders.blob_loaders import (
 from langchain_core.documents.base import Document
 from sinapsis_core.data_containers.data_packet import DataContainer, TextPacket
 from sinapsis_core.template_base import Template
-from sinapsis_core.template_base.base_models import OutputTypes, TemplateAttributes, UIPropertiesMetadata
+from sinapsis_core.template_base.base_models import (
+    OutputTypes,
+    TemplateAttributes,
+    UIPropertiesMetadata,
+)
 from sinapsis_core.template_base.dynamic_template import (
     BaseDynamicWrapperTemplate,
     WrapperEntryConfig,
@@ -22,21 +26,8 @@ from sinapsis_core.template_base.multi_execute_template import (
 )
 from sinapsis_core.utils.env_var_keys import SINAPSIS_BUILD_DOCS
 
-# base classes or loaders that require non built in object instance
-EXCLUDED_LOADER_MODULE_OBJECTS = [
-    "Blob",
-    "BlobLoader",
-    "OracleTextSplitter",
-    "OracleDocLoader",
-    "TrelloLoaderExecute",
-    "TwitterTweetLoader",
-    "TrelloLoader",
-    "GoogleApiYoutubeLoader",
-    "GoogleApiClient",
-    "DiscordChatLoader",
-    "AssemblyAIAudioTranscriptLoader",
-    "ArcGISLoader",
-]
+from sinapsis_langchain_readers.helpers.excluded_loader_modules_objects import EXCLUDED_LOADER_MODULE_OBJECTS
+from sinapsis_langchain_readers.helpers.tags import Tags
 
 
 class LangChainDataReaderBase(BaseDynamicWrapperTemplate):
@@ -68,9 +59,22 @@ class LangChainDataReaderBase(BaseDynamicWrapperTemplate):
     """
 
     WrapperEntry = WrapperEntryConfig(
-        wrapped_object=document_loaders, exclude_module_atts=EXCLUDED_LOADER_MODULE_OBJECTS
+        wrapped_object=document_loaders,
+        exclude_module_atts=EXCLUDED_LOADER_MODULE_OBJECTS,
     )
-    UIProperties = UIPropertiesMetadata(category="LangChain", output_type=OutputTypes.TEXT)
+    UIProperties = UIPropertiesMetadata(
+        category="LangChain",
+        output_type=OutputTypes.TEXT,
+        tags=[
+            Tags.DOCUMENTS,
+            Tags.DOCUMENT_LOADING,
+            Tags.DYNAMIC,
+            Tags.FILES,
+            Tags.LANGCHAIN,
+            Tags.LOADERS,
+            Tags.READERS,
+        ],
+    )
 
     class AttributesBaseModel(TemplateAttributes):
         """
@@ -88,10 +92,12 @@ class LangChainDataReaderBase(BaseDynamicWrapperTemplate):
         """
         for document in documents:
             if document.metadata:
+                text_content = document.metadata.get("summary") or document.page_content
                 text_packet = TextPacket(
-                    content=document.metadata["summary"],
-                    source=document.metadata["title"],
+                    content=text_content,
                 )
+                if document.metadata.get("title", False):
+                    text_content.source = document.metadata["title"]
             else:
                 document = cast(Document, document)
                 text_packet = TextPacket(content=document.page_content)
