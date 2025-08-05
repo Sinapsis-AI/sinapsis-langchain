@@ -1,6 +1,6 @@
 [project]
 name = "sinapsis-langchain-readers"
-version = "0.1.5"
+version = "0.1.6"
 description = "Package that provides support for Langchain community data loaders."
 authors = [{ name = "SinapsisAI", email = "dev@sinapsis.tech" }]
 readme = "README.md"
@@ -33,6 +33,7 @@ langchain-webpages-readers = [
 langchain-wikipedia-readers = ["wikipedia>=1.4.0"]
 langchain-pdfs-readers = [
     "bibtexparser>=1.4.2",
+    "pdfplumber>=0.11.7",
     "pymupdf>=1.24.13",
     "pypdf>=5.1.0",
 ]
@@ -63,19 +64,24 @@ langchain-cloud-readers = [
     "pyodps>=0.12.1",
     "python-dotenv>=1.0.1",
     "o365>=2.1.2",
+    "google-cloud-speech>=2.33.0",
 ]
 langchain-social-readers = [
     "mastodon-py>=1.8.1",
+    "nest-asyncio>=1.6.0",
     "pandas>=2.2.3",
+    "telethon>=1.40.0",
     "tweepy>=4.14.0",
 ]
-langchain-productivity-tools-readers = ["lxml>=4.30", "py-trello>=0.20.1"]
+langchain-productivity-tools-readers = [
+    "lxml>=4.30",
+]
 langchain-common-readers = ["bs4>=0.0.2", "jq>=1.8.0"]
 langchain-database-readers = [
     "fauna>=2.3.0",
     "langchain>=0.3.7",
     "langchain-google-alloydb-pg>=0.8.0",
-    "langchain-google-community[bigquery]>=2.0.2",
+    "motor>=3.7.1",
     "pyowm>=3.3.0",
 ]
 langchain-productivity-tools = ["gitpython>=3.1.43"]

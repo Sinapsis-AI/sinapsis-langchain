@@ -97,7 +97,7 @@ class LangChainDataReaderBase(BaseDynamicWrapperTemplate):
                     content=text_content,
                 )
                 if document.metadata.get("title", False):
-                    text_content.source = document.metadata["title"]
+                    text_packet.source = document.metadata["title"]
             else:
                 document = cast(Document, document)
                 text_packet = TextPacket(content=document.page_content)

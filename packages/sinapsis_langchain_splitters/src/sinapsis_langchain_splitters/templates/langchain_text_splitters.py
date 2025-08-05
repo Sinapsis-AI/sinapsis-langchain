@@ -16,6 +16,15 @@ from sinapsis_langchain_splitters.helpers.tags import Tags
 SOURCE: str = "source"
 CONTENT: str = "content"
 
+EXCLUDED_MODULES = [
+    "ElementType",
+    "LineType",
+    "TextSplitter",
+    "HeaderType",
+    "RecursiveJsonSplitter",
+    "split_text_on_tokens",
+]
+
 
 class LangChainTextSplitterBase(BaseDynamicWrapperTemplate):
     """
@@ -46,7 +55,7 @@ class LangChainTextSplitterBase(BaseDynamicWrapperTemplate):
 
     """
 
-    WrapperEntry = WrapperEntryConfig(wrapped_object=text_splitter, exclude_module_atts=["split_text_on_tokens"])
+    WrapperEntry = WrapperEntryConfig(wrapped_object=text_splitter, exclude_module_atts=EXCLUDED_MODULES)
     UIProperties = UIPropertiesMetadata(
         category="LangChain",
         output_type=OutputTypes.TEXT,
