@@ -12,7 +12,6 @@ EXCLUDED_LOADER_MODULE_OBJECTS = [
     "PySparkDataFrameLoader",
     "RocksetLoader",
     "YuqueLoader",
-    "YoutubeLoader",
     "AZLyricsLoader",
     "SpiderLoader",
     "SpreedlyLoader",

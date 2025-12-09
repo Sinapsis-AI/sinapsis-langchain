@@ -1,6 +1,6 @@
 [project]
 name = "sinapsis-langchain-readers"
-version = "0.1.6"
+version = "0.1.8"
 description = "Package that provides support for Langchain community data loaders."
 authors = [{ name = "SinapsisAI", email = "dev@sinapsis.tech" }]
 readme = "README.md"
@@ -9,6 +9,7 @@ requires-python = ">=3.10"
 dependencies = [
     "langchain-community>=0.3.5",
     "sinapsis>=0.1.1",
+    "sinapsis-core>=0.2.4",
 ]
 
 
@@ -67,11 +68,13 @@ langchain-cloud-readers = [
     "google-cloud-speech>=2.33.0",
 ]
 langchain-social-readers = [
+    "langchain-yt-dlp==0.0.7",
     "mastodon-py>=1.8.1",
     "nest-asyncio>=1.6.0",
     "pandas>=2.2.3",
     "telethon>=1.40.0",
     "tweepy>=4.14.0",
+    "youtube-transcript-api>=1.2.2",
 ]
 langchain-productivity-tools-readers = [
     "lxml>=4.30",
