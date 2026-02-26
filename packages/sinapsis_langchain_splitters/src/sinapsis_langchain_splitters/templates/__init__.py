@@ -6,8 +6,10 @@ from sinapsis.templates import _import_template_package
 
 _root_lib_path = "sinapsis_langchain_splitters.templates"
 
-_template_lookup: dict = {}
-
+_template_lookup: dict = {
+    "PatternAggregatorSplitter": f"{_root_lib_path}.pattern_aggregator_splitter",
+    "RegexTurnSplitter": f"{_root_lib_path}.regex_turn_splitter",
+}
 _ADDITIONAL_TEMPLATE_MODULES = [
     f"{_root_lib_path}.langchain_text_splitters",
 ]

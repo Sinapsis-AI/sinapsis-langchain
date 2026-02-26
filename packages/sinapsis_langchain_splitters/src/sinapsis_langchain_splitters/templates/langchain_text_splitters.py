@@ -92,23 +92,46 @@ class LangChainTextSplitterBase(BaseDynamicWrapperTemplate):
         if not chunks:
             chunks = []
         if isinstance(text_to_split, Document):
-            chunks.append(
-                {
-                    SOURCE: text_to_split.metadata[SOURCE],
-                    CONTENT: self.wrapped_callable(text_to_split.page_content),
-                }
-            )
+            split_chunks = self.wrapped_callable.split_documents(text_to_split.page_content)
+            new_chunks = [
+                {SOURCE: text_to_split.metadata[SOURCE], CONTENT: split_chunk} for split_chunk in split_chunks
+            ]
+            chunks.extend(new_chunks)
 
         elif isinstance(text_to_split, list):
-            chunks.extend(
-                [
-                    {SOURCE: text.metadata[SOURCE], CONTENT: self.wrapped_callable.split_text(text.page_content)}
-                    for text in text_to_split
-                ]
-            )
+            if hasattr(text_to_split, "metadata"):
+                chunks.extend(
+                    [
+                        {
+                            SOURCE: text_to_split.metadata[SOURCE],
+                            CONTENT: self.wrapped_callable.split_documents(text.page_content),
+                        }
+                        for text in text_to_split
+                    ]
+                )
+            else:
+                for text in text_to_split:
+                    if isinstance(text, Document):
+                        split_parts = self.wrapped_callable.split_text(text.page_content)
+
+                        new_chunks = [{SOURCE: text.metadata[SOURCE], CONTENT: part} for part in split_parts]
+                        chunks.extend(new_chunks)
+                    elif isinstance(text, str):
+                        chunks.extend(
+                            {
+                                SOURCE: text_to_split.metadata[SOURCE],
+                                CONTENT: self.wrapped_callable.split_text(text),
+                            }
+                        )
         else:
             if text_to_split:
-                chunks.append({SOURCE: text_to_split.source, CONTENT: self.wrapped_callable(text_to_split.content)})
+                if hasattr(text_to_split, SOURCE):
+                    chunks.append(
+                        {SOURCE: text_to_split.source, CONTENT: self.wrapped_callable.split_text(text_to_split.content)}
+                    )
+                else:
+                    chunks.append({CONTENT: self.wrapped_callable.split_text(text_to_split)})
+
         return chunks
 
     def execute(self, container: DataContainer) -> DataContainer:
@@ -118,10 +141,15 @@ class LangChainTextSplitterBase(BaseDynamicWrapperTemplate):
         if self.attributes.generic_key:
             document = self._get_generic_data(container)
             chunks = self.split_document(document, chunks)
+
         else:
             for text in container.texts:
                 chunks = self.split_document(text, chunks)
-        self._set_generic_data(container, chunks)
+        if self.attributes.add_document_as_text_packet:
+            for chunk in chunks:
+                container.texts.append(TextPacket(content=chunk.get(CONTENT), source=chunk.get(SOURCE)))
+        else:
+            self._set_generic_data(container, chunks)
         return container
 
 
