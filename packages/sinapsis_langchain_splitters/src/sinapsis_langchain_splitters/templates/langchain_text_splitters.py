@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from langchain import text_splitter
+from typing import Any
+
+import langchain_text_splitters
 from langchain_core.documents.base import Document
 from sinapsis_core.data_containers.data_packet import DataContainer, TextPacket
-from sinapsis_core.template_base import Template
 from sinapsis_core.template_base.base_models import OutputTypes, TemplateAttributes, UIPropertiesMetadata
 from sinapsis_core.template_base.dynamic_template import (
     BaseDynamicWrapperTemplate,
@@ -17,6 +18,8 @@ SOURCE: str = "source"
 CONTENT: str = "content"
 
 EXCLUDED_MODULES = [
+    "Language",
+    "Tokenizer",
     "ElementType",
     "LineType",
     "TextSplitter",
@@ -55,7 +58,7 @@ class LangChainTextSplitterBase(BaseDynamicWrapperTemplate):
 
     """
 
-    WrapperEntry = WrapperEntryConfig(wrapped_object=text_splitter, exclude_module_atts=EXCLUDED_MODULES)
+    WrapperEntry = WrapperEntryConfig(wrapped_object=langchain_text_splitters, exclude_module_atts=EXCLUDED_MODULES)
     UIProperties = UIPropertiesMetadata(
         category="LangChain",
         output_type=OutputTypes.TEXT,
@@ -78,6 +81,9 @@ class LangChainTextSplitterBase(BaseDynamicWrapperTemplate):
         add_document_as_text_packet: bool = False
         generic_key: str | list[str] | None = None
 
+    attributes: AttributesBaseModel
+    wrapped_callable: Any
+
     def split_document(
         self, text_to_split: Document | list[Document] | TextPacket, chunks: list[dict] | None = None
     ) -> list:
@@ -89,74 +95,71 @@ class LangChainTextSplitterBase(BaseDynamicWrapperTemplate):
         Returns:
                 list : list of processed chunks
         """
+
         if not chunks:
             chunks = []
         if isinstance(text_to_split, Document):
-            split_chunks = self.wrapped_callable.split_documents(text_to_split.page_content)
+            split_chunks = self.wrapped_callable.split_text(text_to_split.page_content)
+
             new_chunks = [
                 {SOURCE: text_to_split.metadata[SOURCE], CONTENT: split_chunk} for split_chunk in split_chunks
             ]
             chunks.extend(new_chunks)
 
         elif isinstance(text_to_split, list):
-            if hasattr(text_to_split, "metadata"):
-                chunks.extend(
-                    [
-                        {
-                            SOURCE: text_to_split.metadata[SOURCE],
-                            CONTENT: self.wrapped_callable.split_documents(text.page_content),
-                        }
-                        for text in text_to_split
-                    ]
-                )
-            else:
-                for text in text_to_split:
-                    if isinstance(text, Document):
-                        split_parts = self.wrapped_callable.split_text(text.page_content)
+            for text in text_to_split:
+                if isinstance(text, Document):
+                    split_parts = self.wrapped_callable.split_text(text.page_content)
+                    new_chunks = [{SOURCE: text.metadata[SOURCE], CONTENT: part} for part in split_parts]
+                    chunks.extend(new_chunks)
+                elif isinstance(text, str):
+                    split_parts = self.wrapped_callable.split_text(text)
+                    new_chunks = [{CONTENT: part} for part in split_parts]
+                    chunks.extend(new_chunks)
 
-                        new_chunks = [{SOURCE: text.metadata[SOURCE], CONTENT: part} for part in split_parts]
-                        chunks.extend(new_chunks)
-                    elif isinstance(text, str):
-                        chunks.extend(
-                            {
-                                SOURCE: text_to_split.metadata[SOURCE],
-                                CONTENT: self.wrapped_callable.split_text(text),
-                            }
-                        )
+        elif isinstance(text_to_split, TextPacket):
+            split_chunks = self.wrapped_callable.split_text(text_to_split.content)
+            new_chunks = [{SOURCE: text_to_split.source, CONTENT: split_chunk} for split_chunk in split_chunks]
+            chunks.extend(new_chunks)
         else:
-            if text_to_split:
-                if hasattr(text_to_split, SOURCE):
-                    chunks.append(
-                        {SOURCE: text_to_split.source, CONTENT: self.wrapped_callable.split_text(text_to_split.content)}
-                    )
-                else:
-                    chunks.append({CONTENT: self.wrapped_callable.split_text(text_to_split)})
+            unsup_type = type(text_to_split)
+            log_msg = f"Unsupported text_to_split type: {unsup_type}. Expected: Document, list[Document], TextPacket."
+            self.logger.warning(log_msg)
 
         return chunks
 
     def execute(self, container: DataContainer) -> DataContainer:
         """Execute method of the template. It extracts the generic_data field of the container and
-        uses a TextSplitter from Langchain to split the text into chunks, to later be stored in the container"""
+        uses a TextSplitter from Langchain to split the text into chunks, to later be stored in the
+        container"""
         chunks: list[dict] = []
-        if self.attributes.generic_key:
+        if self.attributes.generic_key is not None:
             document = self._get_generic_data(container)
-            chunks = self.split_document(document, chunks)
-
+            chunks = self.split_document(document, chunks)  #  ty: ignore[invalid-argument-type]
         else:
-            for text in container.texts:
-                chunks = self.split_document(text, chunks)
+            for text_packet in container.texts:
+                chunks.extend(self.split_document(text_packet, chunks))
+
+        if not chunks:
+            log_msg = (
+                "No chunks were created from the input text. Please check the input and the splitter configuration."
+            )
+            self.logger.warning(log_msg)
+            return container
+
         if self.attributes.add_document_as_text_packet:
-            for chunk in chunks:
-                container.texts.append(TextPacket(content=chunk.get(CONTENT), source=chunk.get(SOURCE)))
+            text_packets = [TextPacket(content=chunk.get(CONTENT), source=chunk.get(SOURCE)) for chunk in chunks]
+            container.texts = text_packets
         else:
             self._set_generic_data(container, chunks)
         return container
 
 
-def __getattr__(name: str) -> Template:
+def __getattr__(name: str) -> type[BaseDynamicWrapperTemplate]:
     """Only create a template if it's imported, this avoids creating all the base models for all templates
     and potential import errors due to not available packages.
     """
+
     if name in LangChainTextSplitterBase.WrapperEntry.module_att_names:
         return make_dynamic_template(name, LangChainTextSplitterBase)
 

@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import re
-from typing import List
+from typing import Any, List
+
 from langchain_core.documents.base import Document
 from sinapsis_core.data_containers.data_packet import DataContainer, TextPacket
-
-from sinapsis_core.template_base.template import Template
-
 from sinapsis_core.template_base.base_models import TemplateAttributes, TemplateAttributeType
+from sinapsis_core.template_base.template import Template
 
 
 class RegexTurnSplitterAttributes(TemplateAttributes):
@@ -23,9 +22,10 @@ class RegexTurnSplitter(Template):
     Each regex match start becomes a new chunk (no merging, no packing).
     """
 
+    attributes: RegexTurnSplitterAttributes
     AttributesBaseModel = RegexTurnSplitterAttributes
 
-    def __init__(self, attributes: TemplateAttributeType)->None:
+    def __init__(self, attributes: TemplateAttributeType) -> None:
         super().__init__(attributes)
         newline = r"(?:\r?\n|\\n)"
         if self.attributes.pattern_1 and self.attributes.pattern_2:
@@ -36,7 +36,6 @@ class RegexTurnSplitter(Template):
         elif self.attributes.pattern_2:
             full_pattern = rf"(?=(?:^|{newline}){self.attributes.pattern_2}[^\r\n]+)"
         elif self.attributes.pattern_1:
-
             first_pattern = "|".join(re.escape(s) for s in self.attributes.pattern_1)
             self.prefix = re.compile(rf"^(?:{first_pattern}):\s*") if self.attributes.remove_pattern else None
             full_pattern = rf"(?=(?:^|{newline})(?:{first_pattern}):)"
@@ -49,30 +48,28 @@ class RegexTurnSplitter(Template):
         parts = self.pattern.split(text)
 
         chunks = []
-        for p in parts:
-            p = p.strip()
+        if self.prefix is not None:
+            for p in parts:
+                p = p.strip()
 
-            if p:
-                p = self.prefix.sub("", p) if self.prefix else p
-                chunks.append(p)
+                if p:
+                    p = self.prefix.sub("", p) if self.attributes.remove_pattern else p
+                    chunks.append(p)
         return chunks
 
-    def split_documents(self, documents: List[Document]) -> List[Document]:
-
+    def split_documents(self, documents: List[Document]) -> List[dict[str, Any]]:
         out = [
             {"content": chunk, "source": doc.metadata.get("source")}
             for doc in documents
             for chunk in self.split_text(doc.page_content)
         ]
-        # for doc in documents:
-        #     for chunk in self.split_text(doc.page_content):
-        #         out.append({"content":chunk, "source":doc.metadata})
+
         return out
 
     def execute(self, container: DataContainer) -> DataContainer:
         if self.attributes.generic_key:
             documents = self._get_generic_data(container)
-            chunks = self.split_documents(documents)
+            chunks = self.split_documents(documents)  # ty: ignore[invalid-argument-type]
 
         else:
             chunks = []
@@ -81,9 +78,8 @@ class RegexTurnSplitter(Template):
                 chunks.extend(parts)
 
         if self.attributes.return_as_text_packets:
-            new_packets = [TextPacket(content=c.get('content'),source=c.get("source")) for c in chunks]
+            new_packets = [TextPacket(content=c.get("content"), source=c.get("source")) for c in chunks]
             container.texts.extend(new_packets)
         else:
             self._set_generic_data(container, chunks)
-        print ('FINAL CONTAINER', container)
         return container

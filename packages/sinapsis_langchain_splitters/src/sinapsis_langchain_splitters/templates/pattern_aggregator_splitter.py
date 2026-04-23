@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import re
-from langchain_core.documents.base import Document
 
+from langchain_core.documents.base import Document
 from sinapsis_core.data_containers.data_packet import DataContainer, TextPacket
-from sinapsis_core.template_base.template import Template
 from sinapsis_core.template_base.base_models import TemplateAttributes, TemplateAttributeType
+from sinapsis_core.template_base.template import Template
 
 
 class SpeakerAggregatorAttributes(TemplateAttributes):
@@ -27,8 +27,9 @@ class PatternAggregatorSplitter(Template):
     """
 
     AttributesBaseModel = SpeakerAggregatorAttributes
+    attributes: SpeakerAggregatorAttributes
 
-    def __init__(self, attributes: TemplateAttributeType):
+    def __init__(self, attributes: TemplateAttributeType) -> None:
         super().__init__(attributes)
 
         if not self.attributes.pattern_1:
@@ -73,23 +74,21 @@ class PatternAggregatorSplitter(Template):
     def execute(self, container: DataContainer) -> DataContainer:
         if self.attributes.generic_key:
             documents = self._get_generic_data(container)
-            chunks = self.aggregate_documents(documents)
+            chunks = self.aggregate_documents(documents)  # ty: ignore[invalid-argument-type]
 
         else:
             chunks = []
             for text in container.texts:
                 aggregated = self.aggregate_text(text.content)
                 for speaker, content in aggregated.items():
-                    chunks.append(
-                        {"content": content, "source": speaker}
-                    )
+                    chunks.append({"content": content, "source": speaker})
 
         if self.attributes.return_as_text_packets:
             new_packets = [
                 TextPacket(
                     content=c["content"],
                     source=c.get("source"),
-                    #annotations={"speaker": c.get("speaker")},
+                    # annotations={"speaker": c.get("speaker")},
                 )
                 for c in chunks
             ]

@@ -2,7 +2,7 @@
 from enum import Enum
 
 
-class Tags(Enum):
+class Tags(str, Enum):
     DOCUMENTS = "documents"
     DOCUMENT_LOADING = "document_loading"
     DYNAMIC = "dynamic"

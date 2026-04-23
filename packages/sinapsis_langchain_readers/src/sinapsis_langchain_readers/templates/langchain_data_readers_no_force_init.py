@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from sinapsis_core.template_base import Template
 from sinapsis_core.template_base.dynamic_template import (
+    BaseDynamicWrapperTemplate,
     WrapperEntryConfig,
 )
 from sinapsis_core.template_base.dynamic_template_factory import make_dynamic_template
@@ -66,7 +66,7 @@ class ExecuteNTimesLangchainDataReadersNoForceInit(LangChainDataReaderBase):
     )
 
 
-def __getattr__(name: str) -> Template:
+def __getattr__(name: str) -> type[BaseDynamicWrapperTemplate]:
     """
     Only create a template if it's imported, this avoids creating all the base models for all templates
     and potential import errors due to not available packages.

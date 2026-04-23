@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import cast
+from typing import Any, cast
 
 from langchain_community.document_loaders.blob_loaders import Blob
 from langchain_core.documents.base import Document
@@ -21,16 +21,20 @@ class BaseStaticLoader(Template):
     UIProperties = UIPropertiesMetadata(
         category="LangChain",
         output_type=OutputTypes.TEXT,
-        tags=[
-            Tags.DOCUMENTS,
-            Tags.DOCUMENT_LOADING,
-            Tags.DYNAMIC,
-            Tags.FILES,
-            Tags.LANGCHAIN,
-            Tags.LOADERS,
-            Tags.READERS,
-        ],
+        tags=cast(
+            list[str],
+            [
+                Tags.DOCUMENTS,
+                Tags.DOCUMENT_LOADING,
+                Tags.DYNAMIC,
+                Tags.FILES,
+                Tags.LANGCHAIN,
+                Tags.LOADERS,
+                Tags.READERS,
+            ],
+        ),
     )
+    loader: Any
 
     @staticmethod
     def append_documents_as_text_packet(container: DataContainer, documents: list[Document | Blob]) -> None:
@@ -47,7 +51,7 @@ class BaseStaticLoader(Template):
     def execute(self, container: DataContainer) -> DataContainer:
         documents = self.loader.load()
         if documents:
-            if self.attributes.add_document_as_text_packet:
+            if getattr(self.attributes, "add_document_as_text_packet", None) is not None:
                 self.append_documents_as_text_packet(container, documents)
             else:
                 self._set_generic_data(container, documents)

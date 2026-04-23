@@ -10,7 +10,6 @@ from langchain_community.document_loaders.blob_loaders import (
 )
 from langchain_core.documents.base import Document
 from sinapsis_core.data_containers.data_packet import DataContainer, TextPacket
-from sinapsis_core.template_base import Template
 from sinapsis_core.template_base.base_models import (
     OutputTypes,
     TemplateAttributes,
@@ -65,15 +64,18 @@ class LangChainDataReaderBase(BaseDynamicWrapperTemplate):
     UIProperties = UIPropertiesMetadata(
         category="LangChain",
         output_type=OutputTypes.TEXT,
-        tags=[
-            Tags.DOCUMENTS,
-            Tags.DOCUMENT_LOADING,
-            Tags.DYNAMIC,
-            Tags.FILES,
-            Tags.LANGCHAIN,
-            Tags.LOADERS,
-            Tags.READERS,
-        ],
+        tags=cast(
+            list[str],
+            [
+                Tags.DOCUMENTS,
+                Tags.DOCUMENT_LOADING,
+                Tags.DYNAMIC,
+                Tags.FILES,
+                Tags.LANGCHAIN,
+                Tags.LOADERS,
+                Tags.READERS,
+            ],
+        ),
     )
 
     class AttributesBaseModel(TemplateAttributes):
@@ -83,6 +85,8 @@ class LangChainDataReaderBase(BaseDynamicWrapperTemplate):
 
         add_document_as_text_packet: bool = False
 
+    attributes: AttributesBaseModel
+
     @staticmethod
     def append_documents_as_text_packet(container: DataContainer, documents: list[Document | Blob]) -> None:
         """Method to append each string of the Document or list[Documents] to a new TextPacket
@@ -91,16 +95,16 @@ class LangChainDataReaderBase(BaseDynamicWrapperTemplate):
             documents (list[Document]) : list of documents to split and append to TextPacket
         """
         for document in documents:
+            text_content = getattr(document, "page_content", None)
+            text_packet = TextPacket(
+                content=text_content,
+            )
             if document.metadata:
-                text_content = document.metadata.get("summary") or document.page_content
-                text_packet = TextPacket(
-                    content=text_content,
-                )
                 if document.metadata.get("title", False):
                     text_packet.source = document.metadata["title"]
-            else:
-                document = cast(Document, document)
-                text_packet = TextPacket(content=document.page_content)
+                document_summary = document.metadata.get("summary")
+                if document_summary:
+                    text_packet.generic_data = {"summary": document_summary}
             container.texts.append(text_packet)
 
     def execute(self, container: DataContainer) -> DataContainer:
@@ -108,7 +112,7 @@ class LangChainDataReaderBase(BaseDynamicWrapperTemplate):
         if isinstance(self.wrapped_callable, LangChainBlobLoader):
             documents = list(self.wrapped_callable.yield_blobs())
         elif isinstance(self.wrapped_callable, LangChainBaseLoader):
-            documents = self.wrapped_callable.load()
+            documents = self.wrapped_callable.load()  # ty: ignore[invalid-assignment]
         else:
             self.logger.warning("Unsupported wrapped_callable type for langchain data loader.")
 
@@ -129,7 +133,7 @@ class ExecuteNTimesLangchainDataReaders(LangChainDataReaderBase):
     )
 
 
-def __getattr__(name: str) -> Template:
+def __getattr__(name: str) -> type[BaseDynamicWrapperTemplate]:
     """
     Only create a template if it's imported, this avoids creating all the base models for all templates
     and potential import errors due to not available packages.
