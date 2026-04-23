@@ -1,3 +1,4 @@
+[![sp](https://img.shields.io/badge/lang-sp-red.svg)](https://github.com/Sinapsis-AI/sinapsis-langchain/blob/main/README.es.md)
 <h1 align="center">
 <br>
 <a href="https://sinapsis.tech/">
